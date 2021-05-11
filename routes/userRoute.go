@@ -26,6 +26,12 @@ func OpsUserDoLogin(ctx *fiber.Ctx) error {
 
 	// 利用邮箱去查数据
 	matchUser := service.FindUserByPhoneService(hashedEmail)
+
+	if matchUser.Password == "" {
+		errRes := model.IResponse{Code: model.Err, Msg: "该用户未注册"}
+		return ctx.JSON(&errRes)
+	}
+
 	if matchUser.Password != hashedPassword {
 		errRes := model.IResponse{Code: model.Err, Msg: "密码错误"}
 		return ctx.JSON(&errRes)

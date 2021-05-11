@@ -15,7 +15,13 @@ func init() {
 	if err != nil {
 		panic("数据库连接错误")
 	}
+
 	err = Db.AutoMigrate(&model.User{})
+	err = Db.AutoMigrate(&model.App{})
+	err = Db.AutoMigrate(&model.Banner{})
+	err = Db.AutoMigrate(&model.Menu{})
+	err = Db.AutoMigrate(&model.Button{})
+
 	if err != nil {
 		panic("创建数据表错误")
 	}
