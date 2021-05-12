@@ -7,6 +7,9 @@ import (
 	"yinliuService/utils"
 )
 
+/**
+** 创建新app的路由方法
+ */
 func CreateNewAppRoute(ctx *fiber.Ctx) error {
 	var app model.App
 	err := ctx.BodyParser(&app)

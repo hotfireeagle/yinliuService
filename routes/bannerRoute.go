@@ -53,3 +53,35 @@ func CreateNewBannerRoute(ctx *fiber.Ctx) error {
 	okRes := model.IResponse{Code: model.Ok}
 	return ctx.JSON(&okRes)
 }
+
+/**
+** 查找一个appID所关联的banner列表数据
+ */
+func FindBannersByAppId(ctx *fiber.Ctx) error {
+	appId := ctx.Params("appId") // 应用ID
+
+	bannerIds := service.FindRelatedBannersByAppId(appId)
+	var result []model.BannerJson
+
+	if len(bannerIds) == 0 {
+		res := model.IResponse{Code: model.Ok, Data: &result, Msg: "该应用并不存在banner"}
+		return ctx.JSON(&res)
+	}
+
+	banners := service.FindBannersByIds(bannerIds)
+	if len(*banners) == 0 {
+		res := model.IResponse{Code: model.Ok, Data: &result, Msg: "指定bannerId在数据库并不存在"}
+		return ctx.JSON(&res)
+	}
+
+	for _, bannerObj := range *banners {
+		bjObj := model.BannerJson{
+			Id:          bannerObj.Id,
+			Src:         bannerObj.Src,
+			RedirectUrl: bannerObj.RedirectUrl,
+		}
+		result = append(result, bjObj)
+	}
+
+	return ctx.JSON(model.IResponse{Code: model.Ok, Data: &result})
+}
