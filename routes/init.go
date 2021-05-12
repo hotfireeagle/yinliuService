@@ -18,6 +18,8 @@ func InitRouter(app *fiber.App) {
 	serviceBannerModule := serviceModule.Group("/banner")
 	serviceBannerModule.Post("/new", middleware.TokenAuth, CreateNewBannerRoute)
 	serviceBannerModule.Get("/list/:appId", middleware.TokenAuth, FindBannersByAppId)
+	serviceBannerModule.Delete("/:bannerId", middleware.TokenAuth, DeleteBannerByBannerId)
+	serviceBannerModule.Patch("/:bannerId", middleware.TokenAuth, PatchBannerByBannerId)
 	/****** ------ END -------------- **/
 
 	/** ---------- app模块 ----------- **/

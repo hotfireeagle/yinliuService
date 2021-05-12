@@ -79,9 +79,45 @@ func FindBannersByAppId(ctx *fiber.Ctx) error {
 			Id:          bannerObj.Id,
 			Src:         bannerObj.Src,
 			RedirectUrl: bannerObj.RedirectUrl,
+			Created:     bannerObj.Created,
 		}
 		result = append(result, bjObj)
 	}
 
 	return ctx.JSON(model.IResponse{Code: model.Ok, Data: &result})
+}
+
+/**
+** 删除banner
+ */
+func DeleteBannerByBannerId(ctx *fiber.Ctx) error {
+	bannerId := ctx.Params("bannerId")
+	result := service.DeleteBannerService(bannerId)
+	if result.Error != nil {
+		errRes := model.IResponse{Code: model.Err, Msg: "删除失败"}
+		return ctx.JSON(&errRes)
+	}
+	okRes := model.IResponse{Code: model.Ok}
+	return ctx.JSON(&okRes)
+}
+
+func PatchBannerByBannerId(ctx *fiber.Ctx) error {
+	bannerId := ctx.Params("bannerId")
+	var bannerJson model.BannerJson
+	err := ctx.BodyParser(&bannerJson)
+	if err != nil {
+		errRes := model.IResponse{Code: model.Err, Msg: "JSON解析错误"}
+		return ctx.JSON(&errRes)
+	}
+	bannerObj := model.Banner{
+		Src:         bannerJson.Src,
+		RedirectUrl: bannerJson.RedirectUrl,
+	}
+	result := service.PatchBannerService(bannerId, &bannerObj)
+	if result.Error != nil {
+		errRes := model.IResponse{Code: model.Err, Msg: "删除失败"}
+		return ctx.JSON(&errRes)
+	}
+	okRes := model.IResponse{Code: model.Ok}
+	return ctx.JSON(&okRes)
 }

@@ -1,24 +1,27 @@
 package model
 
+import "time"
+
 /**
 ** Banner表定义
  */
 type Banner struct {
-	Id          string `gorm:"primaryKey;unique;not null"`
-	Src         string `gorm:"not null"` // 图片链接
-	RedirectUrl string // 点击图片后跳转的链接
-	Apps        []App  `gorm:"many2many:app_banners"`
-	Created     int64  `gorm:"autoCreateTime"`
-	Updated     int64  `gorm:"autoUpdateTime"`
+	Id          string    `gorm:"primaryKey;unique;not null"`
+	Src         string    `gorm:"not null"` // 图片链接
+	RedirectUrl string    // 点击图片后跳转的链接
+	Apps        []App     `gorm:"many2many:app_banners"`
+	Created     time.Time `gorm:"autoCreateTime"`
+	Updated     time.Time `gorm:"autoUpdateTime"`
 }
 
 /**
 ** Banner响应数据定义
  */
 type BannerJson struct {
-	Id          string `json:"id"`
-	Src         string `json:"src"`
-	RedirectUrl string `json:"redirectUrl"`
+	Id          string    `json:"id"`
+	Src         string    `json:"src"`
+	RedirectUrl string    `json:"redirectUrl"`
+	Created     time.Time `json:"created"`
 }
 
 type CreateBannerJson struct {
