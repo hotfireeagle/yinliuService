@@ -39,3 +39,12 @@ func FindRelatedMenusByAppId(appId string) []string {
 	db.Db.Table("app_menus").Select("menu_id").Where("app_id = ?", appId).Find(&result)
 	return result
 }
+
+/**
+** 多对多，根据应用ID找出所有关联的ButtonIds
+ */
+func FindRelatedButtonsByAppId(appId string) []string {
+	var result []string
+	db.Db.Table("app_buttons").Select("button_id").Where("app_id = ?", appId).Find(&result)
+	return result
+}

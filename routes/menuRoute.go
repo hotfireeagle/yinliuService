@@ -123,7 +123,7 @@ func PatchMenuByMenuId(ctx *fiber.Ctx) error {
 	}
 	result := service.PatchMenuService(menuId, &menuObj)
 	if result.Error != nil {
-		errRes := model.IResponse{Code: model.Err, Msg: "删除失败"}
+		errRes := model.IResponse{Code: model.Err, Msg: "更新失败"}
 		return ctx.JSON(&errRes)
 	}
 	okRes := model.IResponse{Code: model.Ok}
