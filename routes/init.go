@@ -26,4 +26,12 @@ func InitRouter(app *fiber.App) {
 	serviceAppModule := serviceModule.Group("/app")
 	serviceAppModule.Post("/new", middleware.TokenAuth, CreateNewAppRoute)
 	/** ----------- END ------------- **/
+
+	/** ----------- menu模块 --------- **/
+	serviceMenuModule := serviceModule.Group("/menu")
+	serviceMenuModule.Post("/new", middleware.TokenAuth, CreateNewMenuRoute)
+	serviceMenuModule.Get("/list/:appId", middleware.TokenAuth, FindMenusByAppId)
+	serviceMenuModule.Delete("/:menuId", middleware.TokenAuth, DeleteMenuByMenuId)
+	serviceMenuModule.Patch("/:menuId", middleware.TokenAuth, PatchMenuByMenuId)
+	/** ----------- END ------------- **/
 }

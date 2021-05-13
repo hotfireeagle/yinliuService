@@ -30,3 +30,12 @@ func FindRelatedBannersByAppId(appId string) []string {
 	db.Db.Table("app_banners").Select("banner_id").Where("app_id = ?", appId).Find(&result)
 	return result
 }
+
+/**
+** 多对多，根据应用ID找出所有关联的menuId
+ */
+func FindRelatedMenusByAppId(appId string) []string {
+	var result []string
+	db.Db.Table("app_menus").Select("menu_id").Where("app_id = ?", appId).Find(&result)
+	return result
+}
