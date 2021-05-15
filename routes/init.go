@@ -42,4 +42,13 @@ func InitRouter(app *fiber.App) {
 	serviceButtonModule.Delete("/:buttonId", middleware.TokenAuth, DeleteButtonByButtonId)
 	serviceButtonModule.Patch("/:buttonId", middleware.TokenAuth, PatchButtonByButtonId)
 	/** ------------- END ------------- **/
+
+	/** ------------- 前台的API数据 ----------- **/
+	apiModule := ylApiModule.Group("/front")
+
+	apiModule.Get("/bannerList/:appId", FindBannersByAppId)
+	apiModule.Get("/MenuList/:appId", FindMenusByAppId)
+	apiModule.Get("/ButtonList/:appId", FindButtonsByAppId)
+
+	/** ----------- 前台的API数据结尾 --------- **/
 }

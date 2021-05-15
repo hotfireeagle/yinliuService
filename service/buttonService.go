@@ -26,7 +26,7 @@ func FindButtonsByIds(ids []string) *[]model.Button {
 ** 删除button
  */
 func DeleteButtonService(id string) *gorm.DB {
-	return db.Db.Where("id = ?", id).Delete(&model.Button{})
+	return db.Db.Table("app_buttons").Where("button_id = ?", id).Delete(&model.Any{})
 }
 
 /**

@@ -10,3 +10,5 @@ type App struct {
 	Menus   []Menu   `gorm:"many2many:app_menus"`   // 菜单栏列表
 	Buttons []Button `gorm:"many2many:app_buttons"` // 按钮列表
 }
+
+type Any struct{}

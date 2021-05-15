@@ -26,13 +26,14 @@ func FindMenusByIds(ids []string) *[]model.Menu {
 ** 删除menu
  */
 func DeleteMenuService(id string) *gorm.DB {
-	return db.Db.Where("id = ?", id).Delete(&model.Menu{})
+	return db.Db.Table("app_menus").Where("menu_id = ?", id).Delete(&model.Any{})
 }
 
 /**
 ** 更新menu
  */
 func PatchMenuService(id string, val *model.Menu) *gorm.DB {
-	banner := model.Banner{Id: id}
-	return db.Db.Model(&banner).Updates(*val)
+	//banner := model.Banner{Id: id}
+	//return db.Db.Model(&banner).Updates(*val)
+	return db.Db.Table("menus").Where("id = ?", id).Updates(*val)
 }

@@ -20,7 +20,7 @@ func FindBannersByIds(ids []string) *[]model.Banner {
 }
 
 func DeleteBannerService(id string) *gorm.DB {
-	return db.Db.Where("id = ?", id).Delete(&model.Banner{})
+	return db.Db.Table("app_banners").Where("banner_id = ?", id).Delete(&model.Any{})
 }
 
 func PatchBannerService(id string, val *model.Banner) *gorm.DB {
