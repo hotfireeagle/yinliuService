@@ -33,6 +33,7 @@ func DeleteButtonService(id string) *gorm.DB {
 ** 更新button
  */
 func PatchButtonService(id string, val *model.Button) *gorm.DB {
-	button := model.Button{Id: id}
-	return db.Db.Model(&button).Updates(*val)
+	return db.Db.Table("buttons").Where("id = ?", id).Select("Icon", "Title", "Desc", "BtnTxt", "RedirectUrl").Updates(*val)
+	//button := model.Button{Id: id}
+	//return db.Db.Model(&button).Select("Icon", "Title", "Desc", "BtnTxt", "RedirectUrl").Updates(*val)
 }

@@ -32,8 +32,6 @@ func DeleteMenuService(id string) *gorm.DB {
 /**
 ** 更新menu
  */
-func PatchMenuService(id string, val *model.Menu) *gorm.DB {
-	//banner := model.Banner{Id: id}
-	//return db.Db.Model(&banner).Updates(*val)
-	return db.Db.Table("menus").Where("id = ?", id).Updates(*val)
+func PatchMenuService(id string, val model.Menu) *gorm.DB {
+	return db.Db.Table("menus").Debug().Where("id = ?", id).Select("Icon", "Text", "RedirectUrl").Updates(val)
 }

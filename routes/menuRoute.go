@@ -121,7 +121,7 @@ func PatchMenuByMenuId(ctx *fiber.Ctx) error {
 		RedirectUrl: menuJson.RedirectUrl,
 		Text:        menuJson.Text,
 	}
-	result := service.PatchMenuService(menuId, &menuObj)
+	result := service.PatchMenuService(menuId, menuObj)
 	if result.Error != nil {
 		errRes := model.IResponse{Code: model.Err, Msg: "更新失败"}
 		return ctx.JSON(&errRes)

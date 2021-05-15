@@ -24,6 +24,7 @@ func DeleteBannerService(id string) *gorm.DB {
 }
 
 func PatchBannerService(id string, val *model.Banner) *gorm.DB {
-	banner := model.Banner{Id: id}
-	return db.Db.Model(&banner).Updates(*val)
+	//banner := model.Banner{Id: id}
+	//return db.Db.Model(&banner).Select("Src", "RedirectUrl").Updates(*val)
+	return db.Db.Table("banners").Where("id = ?", id).Select("Src", "RedirectUrl").Updates(*val)
 }
