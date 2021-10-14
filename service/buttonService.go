@@ -1,39 +1,52 @@
 package service
 
 import (
-	"gorm.io/gorm"
-	"yinliuService/db"
+	"time"
 	"yinliuService/model"
+	"yinliuService/tool"
 )
 
-/**
-** 创建新button
- */
-func CreateNewButtonService(button *model.Button) *gorm.DB {
-	return db.Db.Create(button)
+// 创建新button
+func CreateNewButtonService(button *model.Button) error {
+	stmt := "insert into buttons(id, icon, title, desc_txt, btn_txt, redirect_url, created_at) values(?, ?, ?, ?, ?, ?, ?)"
+	button.CreatedAt = time.Now()
+	_, err := db.Exec(stmt, button.ID, button.Icon, button.Title, button.DescTxt, button.BtnTxt, button.RedirectUrl, button.CreatedAt)
+	return err
 }
 
-/**
-** 根据menuId列表找出所有button列表
- */
-func FindButtonsByIds(ids []string) *[]model.Button {
+// 查找所有的按钮
+func FindButtons() (*[]model.Button, error) {
 	var result []model.Button
-	db.Db.Where("id IN ?", ids).Order("updated desc").Find(&result)
-	return &result
+	stmt := "select id, icon, title, desc_txt, btn_txt, redirect_url, created_at from buttons where deleted_at is null"
+	rows, err := db.Query(stmt)
+	if err != nil {
+		return &result, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		item := new(model.Button)
+		if err := rows.Scan(item.ID, item.Icon, item.DescTxt, item.BtnTxt, item.RedirectUrl, item.CreatedAt); err != nil {
+			tool.ErrLog(err)
+			continue
+		}
+		result = append(result, *item)
+	}
+	return &result, nil
 }
 
-/**
-** 删除button
- */
-func DeleteButtonService(id string) *gorm.DB {
-	return db.Db.Table("app_buttons").Where("button_id = ?", id).Delete(&model.Any{})
+// 删除button
+func DeleteButtonService(id string) error {
+	now := time.Now()
+	stmt := "update buttons set deleted_at = ? where id = ?"
+	_, err := db.Exec(stmt, now, id)
+	return err
 }
 
-/**
-** 更新button
- */
-func PatchButtonService(id string, val *model.Button) *gorm.DB {
-	return db.Db.Table("buttons").Where("id = ?", id).Select("Icon", "Title", "Desc", "BtnTxt", "RedirectUrl").Updates(*val)
-	//button := model.Button{Id: id}
-	//return db.Db.Model(&button).Select("Icon", "Title", "Desc", "BtnTxt", "RedirectUrl").Updates(*val)
+// 更新button
+func PatchButtonService(button *model.Button) error {
+	now := time.Now()
+	stmt := "update buttons set icon=?, title=?, desc_txt=?, btn_txt=?, redirect_url=?, updated_at=? where id=?"
+	_, err := db.Exec(stmt, button.Icon, button.Title, button.DescTxt, button.BtnTxt, button.RedirectUrl, now, button.ID)
+	return err
+	return nil
 }

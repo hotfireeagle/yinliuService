@@ -7,7 +7,7 @@ import (
 	"time"
 	"yinliuService/model"
 	"yinliuService/service"
-	"yinliuService/utils"
+	"yinliuService/tool"
 )
 
 /**
@@ -20,29 +20,30 @@ func TokenAuth(ctx *fiber.Ctx) error {
 	tokenCipherStr := string(tokenCipherSlice)
 
 	if tokenCipherStr == "" {
-		errRes := model.IResponse{Code: model.UnLogin, Msg: "请先登录"}
+		errRes := model.IResponse{Status: model.UnLogin, Msg: "请先登录"}
 		return ctx.JSON(&errRes)
 	}
 
 	hexTokenCipherSlice, err := hex.DecodeString(tokenCipherStr)
 	if err != nil {
-		errRes := model.IResponse{Code: model.UnLogin, Msg: "token解码失败"}
+		errRes := model.IResponse{Status: model.UnLogin, Msg: "token解码失败"}
 		return ctx.JSON(&errRes)
 	}
 
-	tokenOriginSlice := utils.AesDecode(hexTokenCipherSlice)
+	tokenOriginSlice := tool.AesDecode(hexTokenCipherSlice)
 	err = json.Unmarshal(tokenOriginSlice, &token)
 	if err != nil {
-		errRes := model.IResponse{Code: model.Err, Msg: "JSON解析错误"}
+		errRes := model.IResponse{Status: model.Err, Msg: "JSON解析错误"}
 		return ctx.JSON(&errRes)
 	}
 
-	if !service.IsPhoneExists("phone", token.Uid) {
-		errRes := model.IResponse{Code: model.UnLogin, Msg: "用户不存在"}
+	if !service.FindUserByIdService(token.Uid) {
+		errRes := model.IResponse{Status: model.UnLogin, Msg: "用户不存在"}
 		return ctx.JSON(&errRes)
 	}
+
 	if token.Exp.Before(time.Now()) {
-		errRes := model.IResponse{Code: model.LoginOverdue, Msg: "登录已过期，请重新登录"}
+		errRes := model.IResponse{Status: model.LoginOverdue, Msg: "登录已过期，请重新登录"}
 		return ctx.JSON(&errRes)
 	}
 

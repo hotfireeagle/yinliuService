@@ -1,4 +1,4 @@
-package utils
+package tool
 
 import (
 	"bytes"
@@ -6,16 +6,22 @@ import (
 	"crypto/cipher"
 	"crypto/sha256"
 	"encoding/hex"
-	"math/rand"
-	"time"
+	"golang.org/x/crypto/pbkdf2"
+	"yinliuService/constant"
 )
 
-/**
-** 使用sha256算法来生成hash
- */
+// 使用sha256算法来进行hash
 func Sha256(str string) string {
 	sumArr := sha256.Sum256([]byte(str))
 	return hex.EncodeToString(sumArr[:])
+}
+
+/**
+** 使用pbkdf2算法对密码进行加密
+ */
+func PBKDF2Encode(password string) string {
+	passwordBytes := pbkdf2.Key([]byte(password), constant.PasswordSalt, 4096, 32, sha256.New)
+	return hex.EncodeToString(passwordBytes) // 最终生成的密码将占用64 byte
 }
 
 /**
@@ -40,16 +46,16 @@ func pkcs7UnPadding(text []byte) []byte {
 ** 获取到密钥的一些信息
  */
 func getCipherBlockAndCipherSize(isEncode bool) (cipherSize int, cipherMode cipher.BlockMode) {
-	secretByteSlice := []byte(Secret)
-	cipherBlock, err := aes.NewCipher(secretByteSlice)
+	cipherBlock, err := aes.NewCipher(constant.TokenSalt)
 	if err != nil {
+		ErrLog(err)
 		return 0, nil
 	}
 	cipherSize = cipherBlock.BlockSize()
 	if isEncode {
-		cipherMode = cipher.NewCBCEncrypter(cipherBlock, secretByteSlice[:cipherSize])
+		cipherMode = cipher.NewCBCEncrypter(cipherBlock, constant.TokenSalt[:cipherSize])
 	} else {
-		cipherMode = cipher.NewCBCDecrypter(cipherBlock, secretByteSlice[:cipherSize])
+		cipherMode = cipher.NewCBCDecrypter(cipherBlock, constant.TokenSalt[:cipherSize])
 	}
 	return
 }
@@ -77,25 +83,7 @@ func AesDecode(text []byte) []byte {
 	return resultSlice
 }
 
-/**
-** 把byte切片转换成字符串
- */
 func ByteSlice2Str(byteSlice []byte) string {
 	result := hex.EncodeToString(byteSlice)
 	return result
-}
-
-/**
-** 生成随机字符串
- */
-func GenerateRandomString(l int) string {
-	dict := "0123456789abcdefghijklmnopqrstuvwxyz"
-	bytes := []byte(dict)
-	var result []byte
-	randomFact := rand.New(rand.NewSource(time.Now().UnixNano()))
-	for i := 0; i < l; i++ {
-		result = append(result, bytes[randomFact.Intn(len(bytes))])
-	}
-	str := string(result)
-	return Sha256(str)
 }
